@@ -28,7 +28,7 @@ namespace GenerateBranchNameCore
         /// <inheritdoc/>
         public bool IsCommitNameValid (string commitName)
         {
-            return commitName == null;
+            return commitName != null;
         }
 
         /// <inheritdoc/>
@@ -84,7 +84,7 @@ namespace GenerateBranchNameCore
                                                        .ToLower()
                                                        .Replace(Constants.WhiteSpaceSymbol, Constants.DashSymbol);
 
-            return processedCommitText.Where(symbol => IsSymbolValidPredicate(symbol)).ToString();
+            return new string(processedCommitText.Where(symbol => IsSymbolValidPredicate(symbol)).ToArray());
         }
     }
 }
