@@ -6,39 +6,42 @@ namespace GenerateBranchName
 {
     class MainWindowViewModel : INotifyPropertyChanged
     {
-        private string commitName = "#12345: Test commit for \"GenerateBranchName\" project";
-        public string CommitName 
+        private ICommit commitInst = new Commit() { CommitName = "#12345: Test commit for \"GenerateBranchName\" project",
+                                                    CommitType = CommitTypes.Bug };
+        
+        private IBranch branchInst = new Branch();
+        public IBranch BranchInst 
         {
-            get => commitName;
+            get => branchInst;
             set 
             {
-                commitName = value;
+                branchInst = value;
+                OnPropertyChanged(nameof(BranchName));
+            }
+        }
+
+        public string CommitName 
+        {
+            get => commitInst.CommitName;
+            set 
+            {
+                commitInst.CommitName = value;
                 OnPropertyChanged(nameof(CommitName));
             }
         }
 
-        private CommitTypes commitType = CommitTypes.Bug;
         public CommitTypes CommitType 
         {
-            get => commitType;
+            get => commitInst.CommitType;
             set 
             {
-                commitType = value;
+                commitInst.CommitType = value;
                 Generate(CommitName);
                 OnPropertyChanged(nameof(CommitType));
             }
         }
 
-        private string branchName;
-        public string BranchName 
-        {
-            get => branchName;
-            set 
-            {
-                branchName = value;
-                OnPropertyChanged(nameof(BranchName));
-            }
-        }
+        public string BranchName => branchInst.BranchName;
 
         private WpfCommand generateCmd;
         public WpfCommand GenerateCmd => generateCmd ?? (generateCmd = new WpfCommand(new Action<object>(Generate), new Predicate<object>((dummyParam) => CanExecuteGenerate)));
@@ -50,8 +53,7 @@ namespace GenerateBranchName
 
         private void Generate(object commitName) 
         {
-            BranchNameGeneratorInstance.CommitType = CommitType;
-            BranchName = BranchNameGeneratorInstance.GenerateBranchName(CommitName);
+            BranchInst = BranchNameGeneratorInstance.GenerateBranchName(commitInst);
         }
 
         private bool CanExecuteGenerate => !string.IsNullOrEmpty(CommitName);
