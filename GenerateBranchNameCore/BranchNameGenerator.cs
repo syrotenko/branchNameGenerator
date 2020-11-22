@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace GenerateBranchNameCore
@@ -9,6 +8,14 @@ namespace GenerateBranchNameCore
     /// </summary>
     public class BranchNameGenerator : IBranchNameGenerator
     {
+        private Predicate<string> isCommitNameValidPredicate;
+        /// <inheritdoc/>
+        public Predicate<string> IsCommitNameValidPredicate
+        {
+            get => isCommitNameValidPredicate ?? (isCommitNameValidPredicate = IsCommitNameValid);
+            set => isCommitNameValidPredicate = value;
+        }
+
         private Predicate<char> isSymbolValidPredicate;
         /// <inheritdoc/>
         public Predicate<char> IsSymbolValidPredicate 
@@ -17,76 +24,61 @@ namespace GenerateBranchNameCore
             set => isSymbolValidPredicate = value;
         }
 
-        private Predicate<string> isCommitNameValidPredicate;
         /// <inheritdoc/>
-        public Predicate<string> IsCommitNameValidPredicate 
-        { 
-            get => isCommitNameValidPredicate ?? (isCommitNameValidPredicate = IsCommitNameValid);
-            set => isCommitNameValidPredicate = value;
+        public IBranch GenerateBranchName (ICommit commit)
+        {
+            if (!IsCommitNameValidPredicate(commit.CommitName)) 
+            {
+                throw new ArgumentException(Resources.InvalidCommitNameError);
+            }
+
+            return new Branch()
+            {
+                NumberPart = ProcessNumberCommitText(commit.NumberPart, commit.CommitType),
+                MainTextPart = ProcessMainCommitText(commit.MainTextPart)
+            };
         }
 
-        public CommitTypes? CommitType { get; set; }
 
-
-        /// <inheritdoc/>
-        public bool IsCommitNameValid (string commitName)
+        /// <summary>
+        /// Default method to check whether commit name is valid for processing
+        /// </summary>
+        /// <param name="commitName">Commit name</param>
+        /// <returns></returns>
+        private bool IsCommitNameValid (string commitName)
         {
             return commitName != null;
         }
 
-        /// <inheritdoc/>
-        public bool IsSymbolValid (char symbol)
+        /// <summary>
+        /// Default method to check whether symbol is valid for branch name
+        /// </summary>
+        /// <param name="symbol">Symbol from commit name</param>
+        /// <returns></returns>
+        private bool IsSymbolValid (char symbol)
         {
             // Valid symbols
             //[a-z]
             //[0-9]
             //'-'
-            return char.IsLetter(symbol) || char.IsNumber(symbol) || symbol.Equals(Constants.DashSymbol);
+            return char.IsLetter(symbol) || char.IsNumber(symbol) || symbol.Equals(Symbols.Dash);
         }
 
-        /// <inheritdoc/>
-        public string GenerateBranchName (string commitName)
+        private string ProcessNumberCommitText (string numberCommitText, CommitTypes commitType)
         {
-            if (!IsCommitNameValidPredicate(commitName)) 
-            {
-                throw new ArgumentException(Resources.InvalidCommitNameError);
-            }
-
-            string branchName = commitName.Trim();
-            
-            if (branchName.Any())
-            {
-                List<string> splittedStrings = branchName.Split(new char[] { Constants.DotsSymbol }, 2).ToList();
-
-                if (splittedStrings.Count >= 2)
-                {
-                    splittedStrings[0] = ProcessNumberCommitText(splittedStrings[0]);
-                    splittedStrings[1] = ProcessMainCommitText(splittedStrings[1]);
-                }
-
-                branchName = string.Join(Constants.DashSymbol.ToString(), splittedStrings);
-            }
-
-            return branchName;
-        }
-
-
-        private string ProcessNumberCommitText (string numberCommitText)
-        {
-            return string.Join(Constants.SlashSymbol.ToString(), 
-                               ConvertCommitTypesToString(CommitType),
-                               numberCommitText.StartsWith(Constants.HashSymbol.ToString()) ? numberCommitText.Remove(0, 1) : numberCommitText);
+            return string.Join(Symbols.Slash.ToString(), 
+                               ConvertCommitTypesToString(commitType),
+                               numberCommitText.StartsWith(Symbols.Hash.ToString()) ? numberCommitText.Remove(0, 1) : numberCommitText);
         }
 
         private string ProcessMainCommitText (string mainCommitText)
         {
             string processedCommitText = mainCommitText.Trim()
                                                        .ToLower()
-                                                       .Replace(Constants.WhiteSpaceSymbol, Constants.DashSymbol);
+                                                       .Replace(Symbols.WhiteSpace, Symbols.Dash);
 
             return new string(processedCommitText.Where(symbol => IsSymbolValidPredicate(symbol)).ToArray());
         }
-
 
         private string ConvertCommitTypesToString (CommitTypes? commitType) 
         {
