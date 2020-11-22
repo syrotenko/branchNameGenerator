@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace GenerateBranchName
 {
-    class WpfCommand : ICommand
+    public class WpfCommand : ICommand
     {
         public WpfCommand(Action<object> action, Predicate<object> canExecuteAction) 
         {

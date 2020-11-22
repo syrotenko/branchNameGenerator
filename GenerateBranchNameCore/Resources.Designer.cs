@@ -61,6 +61,33 @@ namespace GenerateBranchNameCore {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to bug.
+        /// </summary>
+        internal static string CommitTypeBug {
+            get {
+                return ResourceManager.GetString("CommitTypeBug", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to feature.
+        /// </summary>
+        internal static string CommitTypeFeature {
+            get {
+                return ResourceManager.GetString("CommitTypeFeature", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to task.
+        /// </summary>
+        internal static string CommitTypeTask {
+            get {
+                return ResourceManager.GetString("CommitTypeTask", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Commit name is invalid.
         /// </summary>
         internal static string InvalidCommitNameError {

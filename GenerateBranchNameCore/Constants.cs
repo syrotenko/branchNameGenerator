@@ -8,4 +8,11 @@
         public const char DashSymbol = '-';
         public const char SlashSymbol = '/';
     }
+
+    public enum CommitTypes 
+    {
+        Bug,
+        Feature,
+        Task,
+    }
 }

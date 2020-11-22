@@ -17,6 +17,18 @@ namespace GenerateBranchName
             }
         }
 
+        private CommitTypes commitType = CommitTypes.Bug;
+        public CommitTypes CommitType 
+        {
+            get => commitType;
+            set 
+            {
+                commitType = value;
+                Generate(CommitName);
+                OnPropertyChanged(nameof(CommitType));
+            }
+        }
+
         private string branchName;
         public string BranchName 
         {
@@ -38,6 +50,7 @@ namespace GenerateBranchName
 
         private void Generate(object commitName) 
         {
+            BranchNameGeneratorInstance.CommitType = CommitType;
             BranchName = BranchNameGeneratorInstance.GenerateBranchName(CommitName);
         }
 

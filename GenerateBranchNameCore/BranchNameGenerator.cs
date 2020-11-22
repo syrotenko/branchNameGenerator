@@ -25,6 +25,9 @@ namespace GenerateBranchNameCore
             set => isCommitNameValidPredicate = value;
         }
 
+        public CommitTypes? CommitType { get; set; }
+
+
         /// <inheritdoc/>
         public bool IsCommitNameValid (string commitName)
         {
@@ -68,14 +71,11 @@ namespace GenerateBranchNameCore
         }
 
 
-        private string ProcessNumberCommitText (string mainCommitText)
+        private string ProcessNumberCommitText (string numberCommitText)
         {
-            if (mainCommitText.StartsWith(Constants.HashSymbol.ToString()))
-            {
-                return mainCommitText.Remove(0, 1);
-            }
-
-            return mainCommitText;
+            return string.Join(Constants.SlashSymbol.ToString(), 
+                               ConvertCommitTypesToString(CommitType),
+                               numberCommitText.StartsWith(Constants.HashSymbol.ToString()) ? numberCommitText.Remove(0, 1) : numberCommitText);
         }
 
         private string ProcessMainCommitText (string mainCommitText)
@@ -85,6 +85,30 @@ namespace GenerateBranchNameCore
                                                        .Replace(Constants.WhiteSpaceSymbol, Constants.DashSymbol);
 
             return new string(processedCommitText.Where(symbol => IsSymbolValidPredicate(symbol)).ToArray());
+        }
+
+
+        private string ConvertCommitTypesToString (CommitTypes? commitType) 
+        {
+            if (commitType == null) 
+            {
+                return string.Empty;
+            }
+
+            switch (commitType) 
+            {
+                case CommitTypes.Bug:
+                    return Resources.CommitTypeBug;
+
+                case CommitTypes.Feature:
+                    return Resources.CommitTypeFeature;
+
+                case CommitTypes.Task:
+                    return Resources.CommitTypeTask;
+
+                default:
+                    return string.Empty;
+            }
         }
     }
 }
