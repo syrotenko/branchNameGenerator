@@ -55,7 +55,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="WpfCommand.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -100,6 +99,10 @@
     <ProjectReference Include="..\GenerateBranchNameCore\GenerateBranchNameCore.csproj">
       <Project>{2FC65C91-D5DB-4D8F-84F3-673161A2D291}</Project>
       <Name>GenerateBranchNameCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfHelper\WpfHelper.csproj">
+      <Project>{0855b602-6f38-470f-827e-9ed5ffc67ecc}</Project>
+      <Name>WpfHelper</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
