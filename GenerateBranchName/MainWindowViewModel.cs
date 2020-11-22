@@ -1,47 +1,53 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using GenerateBranchNameCore;
 
 namespace GenerateBranchName
 {
     class MainWindowViewModel : INotifyPropertyChanged
     {
-        private ICommit commitInst = new Commit() { CommitName = "#12345: Test commit for \"GenerateBranchName\" project",
-                                                    CommitType = CommitTypes.Bug };
-        
-        private IBranch branchInst = new Branch();
-        public IBranch BranchInst 
+        private List<ICommit> commits = new List<ICommit>();
+        public List<ICommit> Commits => commits;
+
+        private List<IBranch> branches = new List<IBranch>();
+        private List<IBranch> Branches 
         {
-            get => branchInst;
+            get => branches;
             set 
             {
-                branchInst = value;
-                OnPropertyChanged(nameof(BranchName));
+                branches = value;
+                OnPropertyChanged(nameof(BranchNames));
             }
         }
 
-        public string CommitName 
+        private string commitNames = "#12345: Test commit for \"GenerateBranchName\" project";
+        public string CommitNames 
         {
-            get => commitInst.CommitName;
+            get => commitNames;
             set 
             {
-                commitInst.CommitName = value;
-                OnPropertyChanged(nameof(CommitName));
+                commitNames = value;
+                OnPropertyChanged(nameof(CommitNames));
             }
         }
 
+        private CommitTypes commitType;
         public CommitTypes CommitType 
         {
-            get => commitInst.CommitType;
+            get => commitType;
             set 
             {
-                commitInst.CommitType = value;
-                Generate(CommitName);
+                commitType = value;
+
+                Generate(CommitNames);
+
                 OnPropertyChanged(nameof(CommitType));
             }
         }
 
-        public string BranchName => branchInst.BranchName;
+        public string BranchNames => string.Join(Symbols.NewLine.ToString(), Branches.Select(branch => branch.BranchName));
 
         private WpfCommand generateCmd;
         public WpfCommand GenerateCmd => generateCmd ?? (generateCmd = new WpfCommand(new Action<object>(Generate), new Predicate<object>((dummyParam) => CanExecuteGenerate)));
@@ -51,12 +57,31 @@ namespace GenerateBranchName
         private BranchNameGenerator BranchNameGeneratorInstance => branchNameGeneratorInstance ?? (branchNameGeneratorInstance = new BranchNameGenerator());
 
 
-        private void Generate(object commitName) 
+        private void Generate(object commitNamesObj) 
         {
-            BranchInst = BranchNameGeneratorInstance.GenerateBranchName(commitInst);
+            if (commitNamesObj is string commitNames) 
+            {
+                Commits.Clear();
+                Branches.Clear();
+
+                foreach (string newCommitName in commitNames.Split(Symbols.NewLine))
+                {
+                    Commit newCommit = new Commit()
+                    {
+                        CommitName = newCommitName,
+                        CommitType = CommitType
+                    };
+
+
+                    Commits.Add(newCommit);
+                    Branches.Add(BranchNameGeneratorInstance.GenerateBranchName(newCommit));
+                }
+
+                OnPropertyChanged(nameof(BranchNames));
+            }
         }
 
-        private bool CanExecuteGenerate => !string.IsNullOrEmpty(CommitName);
+        private bool CanExecuteGenerate => !string.IsNullOrEmpty(CommitNames);
 
 
         public event PropertyChangedEventHandler PropertyChanged;

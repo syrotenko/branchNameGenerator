@@ -61,21 +61,21 @@ namespace GenerateBranchNameCore
             //[a-z]
             //[0-9]
             //'-'
-            return char.IsLetter(symbol) || char.IsNumber(symbol) || symbol.Equals(Constants.DashSymbol);
+            return char.IsLetter(symbol) || char.IsNumber(symbol) || symbol.Equals(Symbols.Dash);
         }
 
         private string ProcessNumberCommitText (string numberCommitText, CommitTypes commitType)
         {
-            return string.Join(Constants.SlashSymbol.ToString(), 
+            return string.Join(Symbols.Slash.ToString(), 
                                ConvertCommitTypesToString(commitType),
-                               numberCommitText.StartsWith(Constants.HashSymbol.ToString()) ? numberCommitText.Remove(0, 1) : numberCommitText);
+                               numberCommitText.StartsWith(Symbols.Hash.ToString()) ? numberCommitText.Remove(0, 1) : numberCommitText);
         }
 
         private string ProcessMainCommitText (string mainCommitText)
         {
             string processedCommitText = mainCommitText.Trim()
                                                        .ToLower()
-                                                       .Replace(Constants.WhiteSpaceSymbol, Constants.DashSymbol);
+                                                       .Replace(Symbols.WhiteSpace, Symbols.Dash);
 
             return new string(processedCommitText.Where(symbol => IsSymbolValidPredicate(symbol)).ToArray());
         }
