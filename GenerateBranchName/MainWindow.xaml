@@ -86,10 +86,11 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Column="0" Grid.Row="0"
-                       Text="Commit name"/>
+                       Text="Commit names"/>
 
             <TextBox Grid.Column="0" Grid.Row="1"
-                     Text="{Binding CommitName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                     Text="{Binding CommitNames, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     TextWrapping="Wrap" AcceptsReturn="True"/>
 
             <StackPanel Grid.Row="2" Orientation="Horizontal">
                 <RadioButton Content="bug"
@@ -108,14 +109,15 @@
                     Width="100"
                     Height="30"
                     Margin="0, 10, 0, 10"
-                    Command="{Binding GenerateCmd}"/>
+                    Command="{Binding GenerateCmd}"
+                    CommandParameter="{Binding CommitNames}"/>
 
             <TextBlock Grid.Column="0" Grid.Row="4"
                        Text="Branch name"/>
 
             <TextBox Grid.Column="0" Grid.Row="5"
                      IsReadOnly="True"
-                     Text="{Binding BranchName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                     Text="{Binding BranchNames, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
     </Grid>
 </Window>

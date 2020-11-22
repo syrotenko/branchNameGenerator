@@ -41,7 +41,7 @@
   <ItemGroup>
     <Compile Include="Branch.cs" />
     <Compile Include="Commit.cs" />
-    <Compile Include="Constants.cs" />
+    <Compile Include="Symbols.cs" />
     <Compile Include="BranchNameGenerator.cs" />
     <Compile Include="IBranch.cs" />
     <Compile Include="IBranchNameGenerator.cs" />

@@ -30,11 +30,11 @@ namespace GenerateBranchNameCore
 
         private string GetNumberPart (string commitName) 
         {
-            string[] splittedCommitName = commitName.Split(new char[] { Constants.DotsSymbol }, 2);
+            string[] splittedCommitName = commitName.Split(new char[] { Symbols.Dots }, 2);
             
             if (splittedCommitName.Length > 0) 
             {
-                return commitName.Split(new char[] { Constants.DotsSymbol }, 2)[0];
+                return commitName.Split(new char[] { Symbols.Dots }, 2)[0];
             }
 
             return string.Empty;
@@ -42,11 +42,11 @@ namespace GenerateBranchNameCore
 
         private string GetMainTextPart (string commitName)
         {
-            string[] splittedCommitName = commitName.Split(new char[] { Constants.DotsSymbol }, 2);
+            string[] splittedCommitName = commitName.Split(new char[] { Symbols.Dots }, 2);
 
             if (splittedCommitName.Length > 1)
             {
-                return commitName.Split(new char[] { Constants.DotsSymbol }, 2)[1];
+                return commitName.Split(new char[] { Symbols.Dots }, 2)[1];
             }
 
             return string.Empty;
